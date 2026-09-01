@@ -24,7 +24,7 @@ test "integration: full CLI test suite" {
     };
 
     {
-        const args = [_][]const u8{"--port", "8080"};
+        const args = [_][]const u8{ "--port", "8080" };
         try testing.expectError(error.MissingRequiredOption, zcli.parse(RequiredApp, &args));
     }
 
@@ -36,7 +36,7 @@ test "integration: full CLI test suite" {
 
     // Invalid argument
     {
-        const args = [_][]const u8{"--port", "invalid_num", "--api-key", "secret"};
+        const args = [_][]const u8{ "--port", "invalid_num", "--api-key", "secret" };
         try testing.expectError(error.InvalidArgument, zcli.parse(RequiredApp, &args));
     }
 
