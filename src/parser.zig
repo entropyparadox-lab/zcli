@@ -437,9 +437,8 @@ test "parser: basic flags, options, defaults, and optionals" {
     // 3. Short flags and attached values
     {
         const args = [_][]const u8{
-            "-p", "3000",
-            "-hlocalhost",
-            "-v",
+            "-p",          "3000",
+            "-hlocalhost", "-v",
             "-w4",
         };
         const cfg = try parse(ServerConfig, &args);
