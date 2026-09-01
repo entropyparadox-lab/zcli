@@ -34,7 +34,13 @@ pub fn parseWithInit(comptime T: type, init: std.process.Init, allocator: std.me
     return parseWithEnv(T, args_list.items, init.minimal.environ);
 }
 
-// --- End-to-End Test Suite ---
+test {
+    _ = meta;
+    _ = parser;
+    _ = help;
+    _ = completion;
+    _ = @import("edge_cases.zig");
+}
 
 test "zcli: end-to-end declarative CLI with full feature matrix" {
     const testing = std.testing;
