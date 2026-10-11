@@ -1,6 +1,6 @@
-# zcli ⚡
+# zcli ⚡ 
 
-**Zero-Allocation Comptime Declarative CLI, Flag Parser & Completion Generator for Zig (v0.16.0+)**
+**Zero-Allocation Comptime Declarative CLI, Flag Parser & Completion Generator for Zig (v0.17.0+)**
 
 `zcli` is an enterprise-grade, pure Zig command-line interface framework modeled after Rust's `clap` (derive) and Go's `cobra`. By leveraging Zig's powerful compile-time reflection (`@typeInfo`), `zcli` converts plain Zig structs and tagged unions into high-performance, type-safe CLI parsers with **zero heap allocations**, automated **ANSI help formatters**, and native **Bash/Zsh/Fish shell completion generators**.
 
@@ -39,7 +39,7 @@
   - **Bash (`zcli.generateBash`)**
   - **Zsh (`zcli.generateZsh`)**
   - **Fish (`zcli.generateFish`)**
-- 📦 **Pure Zig 0.16.0+**: Zero C dependencies, instant build times, fully cross-compilable.
+- 📦 **Pure Zig 0.17.0-dev**: Zero C dependencies, instant build times, fully cross-compilable.
 
 ---
 
@@ -105,7 +105,7 @@ const ServerConfig = struct {
 pub fn main(init: std.process.Init) !void {
     const allocator = init.arena.allocator();
 
-    // Parse directly from std.process.Init (Zig 0.16.0+)
+    // Parse directly from std.process.Init (Zig 0.17.0-dev)
     const cfg = zcli.parseWithInit(ServerConfig, init, allocator) catch |err| switch (err) {
         error.HelpRequested => {
             var buf: [4096]u8 = undefined;

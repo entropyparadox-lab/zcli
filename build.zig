@@ -48,9 +48,7 @@ pub fn build(b: *std.Build) void {
     });
 
     const run_example = b.addRunArtifact(example_exe);
-    if (b.args) |args| {
-        run_example.addArgs(args);
-    }
+    run_example.addPassthruArgs();
     const example_step = b.step("run-example", "Run zcli example application");
     example_step.dependOn(&run_example.step);
 

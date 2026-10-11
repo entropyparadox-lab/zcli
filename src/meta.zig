@@ -1,5 +1,67 @@
 const std = @import("std");
 
+pub const StructField = struct {
+    name: [:0]const u8,
+    type: type,
+    default_value_ptr: ?*const anyopaque,
+};
+
+pub const UnionField = struct {
+    name: [:0]const u8,
+    type: type,
+};
+
+pub const EnumField = struct {
+    name: [:0]const u8,
+    value: comptime_int,
+};
+
+pub fn structFields(comptime T: type) []const StructField {
+    const info = @typeInfo(T).@"struct";
+    const static = struct {
+        const fields = blk: {
+            var result: [info.field_names.len]StructField = undefined;
+            for (0..info.field_names.len) |i| {
+                result[i] = .{
+                    .name = info.field_names[i],
+                    .type = info.field_types[i],
+                    .default_value_ptr = info.field_attrs[i].default_value_ptr,
+                };
+            }
+            break :blk result;
+        };
+    };
+    return &static.fields;
+}
+
+pub fn unionFields(comptime T: type) []const UnionField {
+    const info = @typeInfo(T).@"union";
+    const static = struct {
+        const fields = blk: {
+            var result: [info.field_names.len]UnionField = undefined;
+            for (0..info.field_names.len) |i| {
+                result[i] = .{ .name = info.field_names[i], .type = info.field_types[i] };
+            }
+            break :blk result;
+        };
+    };
+    return &static.fields;
+}
+
+pub fn enumFields(comptime T: type) []const EnumField {
+    const info = @typeInfo(T).@"enum";
+    const static = struct {
+        const fields = blk: {
+            var result: [info.field_names.len]EnumField = undefined;
+            for (0..info.field_names.len) |i| {
+                result[i] = .{ .name = info.field_names[i], .value = info.field_values[i] };
+            }
+            break :blk result;
+        };
+    };
+    return &static.fields;
+}
+
 /// Returns true if T is a string slice (`[]const u8`, `[:0]const u8`, `[]u8`, `[:0]u8`).
 pub fn isString(comptime T: type) bool {
     const info = @typeInfo(T);
@@ -178,12 +240,12 @@ pub fn isPositionalField(comptime T: type, comptime field_name: []const u8) bool
 }
 
 /// Checks if a field has a default value defined on the struct.
-pub fn hasDefault(comptime field: std.builtin.Type.StructField) bool {
+pub fn hasDefault(comptime field: StructField) bool {
     return field.default_value_ptr != null;
 }
 
 /// Extracts the default value of a struct field at comptime.
-pub fn getDefaultValue(comptime field: std.builtin.Type.StructField) field.type {
+pub fn getDefaultValue(comptime field: StructField) field.type {
     if (field.default_value_ptr) |ptr| {
         const typed_ptr: *const field.type = @ptrCast(@alignCast(ptr));
         return typed_ptr.*;

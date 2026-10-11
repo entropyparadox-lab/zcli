@@ -52,7 +52,7 @@ pub fn parseWithOptions(
 
 /// Initializes default struct field values.
 pub fn initDefaults(comptime T: type) T {
-    const fields = @typeInfo(T).@"struct".fields;
+    const fields = comptime meta.structFields(T);
     var res: T = undefined;
     inline for (fields) |f| {
         if (f.default_value_ptr) |ptr| {
@@ -87,10 +87,10 @@ fn parseSubcommand(
         return error.VersionRequested;
     }
 
-    const u_info = @typeInfo(T).@"union";
+    const union_fields = comptime meta.unionFields(T);
     const sub_args = args[1..];
 
-    inline for (u_info.fields) |u_field| {
+    inline for (union_fields) |u_field| {
         const matches_name = std.mem.eql(u8, u_field.name, first_arg) or
             std.mem.eql(u8, meta.toKebabCase(u_field.name), first_arg);
 
@@ -119,9 +119,9 @@ fn parseStruct(
     environ: ?std.process.Environ,
     options: ParseOptions,
 ) ParseError!T {
-    const struct_fields = @typeInfo(T).@"struct".fields;
+    const struct_fields = comptime meta.structFields(T);
     var result = initDefaults(T);
-    var is_set = [_]bool{false} ** struct_fields.len;
+    var is_set: [struct_fields.len]bool = @splat(false);
 
     // Determine positional vs non-positional fields
     const positional_fields = comptime blk: {
@@ -313,7 +313,7 @@ fn assignPositional(
     positional_idx: *usize,
     comptime positional_count: usize,
 ) ParseError!void {
-    const struct_fields = @typeInfo(T).@"struct".fields;
+    const struct_fields = comptime meta.structFields(T);
     var current_pos: usize = 0;
 
     inline for (struct_fields, 0..) |f, f_idx| {
@@ -368,12 +368,12 @@ fn parseValue(comptime T: type, str: []const u8) ParseError!T {
     }
 
     if (comptime meta.isEnum(T)) {
-        const enum_fields = @typeInfo(T).@"enum".fields;
+        const enum_fields = comptime meta.enumFields(T);
         inline for (enum_fields) |ef| {
             if (std.mem.eql(u8, ef.name, str) or
                 std.mem.eql(u8, meta.toKebabCase(ef.name), str))
             {
-                return @enumFromInt(ef.value);
+                return @fromBackingInt(@intCast(@as(@typeInfo(T).@"enum".tag_type, @intCast(ef.value))));
             }
         }
         return error.InvalidArgument;
