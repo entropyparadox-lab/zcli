@@ -20,7 +20,7 @@ pub const generateBash = completion.generateBash;
 pub const generateZsh = completion.generateZsh;
 pub const generateFish = completion.generateFish;
 
-/// Parses CLI arguments directly from `std.process.Init` (Zig v0.16.0+).
+/// Parses CLI arguments directly from `std.process.Init` (Zig 0.17.0-dev).
 pub fn parseWithInit(comptime T: type, init: std.process.Init, allocator: std.mem.Allocator) !T {
     var args_list: std.ArrayList([]const u8) = .empty;
     defer args_list.deinit(allocator);

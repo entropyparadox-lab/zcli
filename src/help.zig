@@ -48,7 +48,7 @@ pub fn formatHelp(comptime T: type, writer: anytype, options: HelpOptions) !void
     } else {
         try writer.print("Usage: {s} [OPTIONS]", .{app_name});
 
-        const struct_fields = @typeInfo(T).@"struct".fields;
+        const struct_fields = comptime meta.structFields(T);
         inline for (struct_fields) |f| {
             if (meta.isPositionalField(T, f.name)) {
                 try writer.print(" <{s}>", .{meta.toKebabCase(f.name)});
@@ -60,7 +60,7 @@ pub fn formatHelp(comptime T: type, writer: anytype, options: HelpOptions) !void
     // 3. Subcommands (if Tagged Union)
     if (comptime meta.isTaggedUnion(T)) {
         try writer.print("Commands:\n", .{});
-        const u_fields = @typeInfo(T).@"union".fields;
+        const u_fields = comptime meta.unionFields(T);
         inline for (u_fields) |uf| {
             const cmd_name = meta.toKebabCase(uf.name);
             const help_text = meta.getHelpText(T, uf.name) orelse "";
@@ -71,7 +71,7 @@ pub fn formatHelp(comptime T: type, writer: anytype, options: HelpOptions) !void
 
     // 4. Options / Flags (if Struct)
     if (comptime meta.isStruct(T)) {
-        const struct_fields = @typeInfo(T).@"struct".fields;
+        const struct_fields = comptime meta.structFields(T);
 
         // Check if there are positional fields
         var has_positional = false;
