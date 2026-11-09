@@ -39,16 +39,22 @@
   - **Bash (`zcli.generateBash`)**
   - **Zsh (`zcli.generateZsh`)**
   - **Fish (`zcli.generateFish`)**
-- 📦 **Pure Zig 0.17.0-dev**: Zero C dependencies, instant build times, fully cross-compilable.
+- 📦 **Pure Zig 0.17.0+**: Zero C dependencies, instant build times, fully cross-compilable.
 
 ---
 
 ## Installation (`build.zig.zon`)
 
+Tested with Zig **0.17.1**; minimum supported Zig **0.17.0**.
+
+Development install from `main` (moving branch, not a published 1.1.1 tag).
+`zig fetch --save` records the content hash; commit `build.zig.zon` to pin it.
+The 1.1.1 package changes are available after this branch is merged.
+
 Add `zcli` to your `build.zig.zon`:
 
 ```bash
-zig fetch --save https://github.com/entropyparadox-lab/zcli/archive/refs/tags/v1.0.0.tar.gz
+zig fetch --save https://github.com/entropyparadox-lab/zcli/archive/refs/heads/main.tar.gz
 ```
 
 In your `build.zig`:
@@ -105,7 +111,7 @@ const ServerConfig = struct {
 pub fn main(init: std.process.Init) !void {
     const allocator = init.arena.allocator();
 
-    // Parse directly from std.process.Init (Zig 0.17.0-dev)
+    // Parse directly from std.process.Init (Zig 0.17.0+)
     const cfg = zcli.parseWithInit(ServerConfig, init, allocator) catch |err| switch (err) {
         error.HelpRequested => {
             var buf: [4096]u8 = undefined;

@@ -21,7 +21,7 @@ jobs:
       - name: Setup Zig
         uses: mlugg/setup-zig@v2
         with:
-          version: 0.17.0
+          version: 0.17.1
 
       - name: Check Formatting
         run: zig fmt --check src/ examples/ tests/ build.zig
@@ -50,13 +50,13 @@ jobs:
       - name: Setup Zig
         uses: mlugg/setup-zig@v2
         with:
-          version: 0.17.0
+          version: 0.17.1
 
       - name: Run Unit & Integration Tests
         run: zig build test
 
       - name: Run Examples
-        run: zig build run-example -- --help || true
+        run: zig build run-example -- --help
 
       - name: Run Benchmarks
         run: zig build bench
